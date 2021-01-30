@@ -52,7 +52,8 @@ void CONTROLLER_CLASS_NAME::setup (EnigmaIOTNodeClass* node, void* data) {
 	time_t start = millis ();
 
 	// Send a 'hello' message when initalizing is finished
-	sendStartAnouncement ();
+	// BB-Projects : not used, readings sufficient for use as 'heartbeat'
+	//sendStartAnouncement ();
 
 	while (!sensors->isConversionComplete ()) {
 		delay (0);

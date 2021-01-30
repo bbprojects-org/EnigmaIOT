@@ -85,27 +85,7 @@ public:
 	 */
 	virtual bool loadConfig () = 0;
 
-protected:
-
-	/**
-	  * @brief Sends command processing response acknowledge
-	  * @param command Command name
-	  * @param result Command execution success
-	  * @return Returns `true` if message sending was successful. `false` otherwise
-	  */
-	virtual bool sendCommandResp (const char* command, bool result) = 0;
-
-	/**
-	  * @brief Send a message to notify node has started running
-	  * @return Returns `true` if message sending was successful. `false` otherwise
-	  */
-	virtual bool sendStartAnouncement () = 0;
-
-	/**
-	  * @brief Saves output module configuration
-	  * @return Returns `true` if save was successful. `false` otherwise
-	  */
-	virtual bool saveConfig () = 0;
+	// BB-PROJECTS : raised sendJSON() to public for use external to class
 
 	/**
 	  * @brief Sends a JSON encoded message to lower layer
@@ -135,6 +115,29 @@ protected:
 		free (strBuffer);
 		return result;
 	}
+	
+	protected:
+
+	/**
+	  * @brief Sends command processing response acknowledge
+	  * @param command Command name
+	  * @param result Command execution success
+	  * @return Returns `true` if message sending was successful. `false` otherwise
+	  */
+	virtual bool sendCommandResp (const char* command, bool result) = 0;
+
+	/**
+	  * @brief Send a message to notify node has started running
+	  * @return Returns `true` if message sending was successful. `false` otherwise
+	  */
+	virtual bool sendStartAnouncement () = 0;
+
+	/**
+	  * @brief Saves output module configuration
+	  * @return Returns `true` if save was successful. `false` otherwise
+	  */
+	virtual bool saveConfig () = 0;
+
 };
 
 #endif // _ENIGMAIOTJSONCONTROLLER_h

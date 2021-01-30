@@ -177,7 +177,7 @@ int getNextNumber (char*& data, size_t& len/*, char* &position*/) {
 			if (tempData[i] >= '0' && tempData[i] <= '9') {
 				strNum[i] = tempData[i];
 			} else {
-				DEBUG_ERROR ("OTA message format error. Message number not found");
+				DEBUG_ERROR ("OTA message format error, message number not found");
 				number = -1;
 			}
 			if (i == 9) {
@@ -200,7 +200,7 @@ int getNextNumber (char*& data, size_t& len/*, char* &position*/) {
 		tempData++;
 		tempLen--;
 	} else {
-		DEBUG_WARN ("OTA message format warning. separator not found");
+		DEBUG_WARN ("OTA message format warning, separator not found");
 	}
 	number = atoi (strNum);
 	data = tempData;
@@ -712,6 +712,8 @@ void EnigmaIOTGatewayClass::begin (Comms_halClass* comm, uint8_t* networkKey, bo
 	this->input_queue = new EnigmaIOTRingBuffer<msg_queue_item_t> (MAX_INPUT_QUEUE_SIZE);
 	this->comm = comm;
 	this->useCounter = useDataCounter;
+
+	checkResetButton (); // BB-Projects : Check if RESET_PIN is being held low = Config Reset
 
 	uint8_t broadcastKey[KEY_LENGTH];
 	nodelist.initBroadcastNode ();
@@ -1932,6 +1934,46 @@ bool EnigmaIOTGatewayClass::serverHello (const uint8_t* key, Node* node) {
 		return false;
 	}
 }
+
+
+//
+// EXTRAS BY BB-PROJECTS : provide a Gateway reset config capability, as per Nodes
+//
+
+void EnigmaIOTGatewayClass::setResetPin(int pin) {
+	resetPin = pin;
+}
+
+void EnigmaIOTGatewayClass::checkResetButton() {
+	if (resetPin > 0) {
+		pinMode(resetPin, INPUT_PULLUP);
+		if (digitalRead(resetPin) == LOW) { 	// If pin is grounded
+			time_t resetPinGrounded = millis();
+			while (digitalRead(resetPin) == LOW) {
+				if (millis() - resetPinGrounded > RESET_PIN_DURATION) {
+					DEBUG_WARN("GW: Produce config reset");
+					clearFlash();
+					delay(5000);
+					ESP.restart();
+				}
+				delay(50);
+			}
+		}
+	}
+}
+
+void EnigmaIOTGatewayClass::clearFlash() {
+	if (!SPIFFS.begin()) {
+		DEBUG_ERROR("Error on SPIFFS.begin()");
+	}
+	if (SPIFFS.remove(CONFIG_FILE)) {
+		DEBUG_DBG("%s deleted", CONFIG_FILE);
+	} else {
+		DEBUG_ERROR("Error on SPIFFS.remove(\"%s\")", CONFIG_FILE);
+	}
+	SPIFFS.end();
+}
+
 
 EnigmaIOTGatewayClass EnigmaIOTGateway;
 

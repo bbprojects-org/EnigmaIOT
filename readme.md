@@ -1,3 +1,5 @@
+**BBPROJECTS : amended to add reset pin to Gateway, as per Nodes**
+
 # EnigmaIoT
 
 <img src="https://github.com/gmag11/EnigmaIOT/raw/master/logo/logo%20text%20under.svg?sanitize=true" alt="EnigmaIoT Logo" width="50%"/>

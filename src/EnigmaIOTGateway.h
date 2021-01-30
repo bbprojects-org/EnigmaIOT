@@ -661,6 +661,12 @@ public:
 		return &nodelist;
 	}
 
+	// BB-PROJECTS : ADDED FOLLOWING
+	int resetPin = -1; // Pin used to reset configuration if it is connected to ground during startup
+	void setResetPin(int pin);
+	void checkResetButton();
+	void clearFlash();
+
 };
 
 extern EnigmaIOTGatewayClass EnigmaIOTGateway;

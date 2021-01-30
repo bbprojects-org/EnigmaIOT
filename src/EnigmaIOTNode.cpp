@@ -702,7 +702,7 @@ void EnigmaIOTNodeClass::begin (Comms_halClass* comm, uint8_t* gateway, uint8_t*
 #endif
 	} else { // No RTC data, first boot or not configured
 		if (gateway && networkKey) { // If connection data has been passed to library
-			DEBUG_DBG ("EnigmaIot started with config data con begin() call");
+			DEBUG_DBG ("EnigmaIot started with config data from begin() call");
 			memcpy (rtcmem_data.gateway, gateway, comm->getAddressLength ()); // setGateway
 			memcpy (rtcmem_data.networkKey, networkKey, KEY_LENGTH);          // setNetworkKey
 			CryptModule::getSHA256 (rtcmem_data.networkKey, KEY_LENGTH);
@@ -1760,7 +1760,7 @@ bool EnigmaIOTNodeClass::processGetNameCommand (const uint8_t* mac, const uint8_
 	if (name) {
 		nameLen = strlen (name);
 	} else {
-		DEBUG_WARN ("Emprty name");
+		DEBUG_WARN ("Empty name");
 		return false;
 	}
 
@@ -2489,7 +2489,7 @@ nodeInvalidateReason_t EnigmaIOTNodeClass::processInvalidateKey (const uint8_t* 
 }
 
 void EnigmaIOTNodeClass::manageMessage (const uint8_t* mac, const uint8_t* buf, uint8_t count) {
-	DEBUG_INFO ("Reveived message. Origin MAC: %02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	DEBUG_INFO ("Received message. Origin MAC: %02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	DEBUG_VERBOSE ("Received data: %s", printHexBuffer (const_cast<uint8_t*>(buf), count));
 	flashBlue = true;
 
@@ -2500,7 +2500,7 @@ void EnigmaIOTNodeClass::manageMessage (const uint8_t* mac, const uint8_t* buf, 
 
 	// All downlink messages should come from gateway
 	if (memcmp (mac, rtcmem_data.gateway, comm->getAddressLength ()) != 0) {
-		DEBUG_ERROR ("Message comes not from gateway");
+		DEBUG_ERROR ("Message not from gateway");
 		return;
 	}
 
