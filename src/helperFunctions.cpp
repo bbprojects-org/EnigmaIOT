@@ -220,3 +220,22 @@ bool isNumber (String input) {
 //		return 0;
 //	}
 //}
+
+const char PREFIX[6][2] = {" ", "E", "W", "I", "D", "V"};
+
+void _dbgP(const int level, const char* one, const char* two) {
+	DEBUG_ESP_PORT.printf("%s %-60.60s --> %s\n", PREFIX[level], one, two);
+};
+
+char* _getMS() {
+	static char str[18];
+	unsigned long t = millis();
+	int ms = t % 1000;
+	long secs = t / 1000;
+	int hours = secs / 3600;
+	secs %= 3600;
+	int mins = secs / 60;
+	secs %= 60;
+	sprintf(str, "%03d:%02d:%02ld:%03d", hours, mins, secs, ms);
+	return str;
+}

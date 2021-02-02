@@ -30,38 +30,52 @@
 
 #ifdef ESP8266
 const char* extractFileName (const char* path);
-#define DEBUG_LINE_PREFIX() DEBUG_ESP_PORT.printf_P (PSTR("[%lu][%s:%d] %s() Heap: %lu | "),millis(),extractFileName(__FILE__),__LINE__,__FUNCTION__,(unsigned long)ESP.getFreeHeap())
+//#define DEBUG_LINE_PREFIX() DEBUG_ESP_PORT.printf_P (PSTR("[%lu][%s:%d] %s() Heap: %lu | "),millis(),extractFileName(__FILE__),__LINE__,__FUNCTION__,(unsigned long)ESP.getFreeHeap())
 #endif
 
 #ifdef DEBUG_ESP_PORT
 
+  #define DBG1_LEN 72
+  #define DBG2_LEN 140
+  static char _dbg1[DBG1_LEN];
+  static char _dbg2[DBG2_LEN];
+  void _dbgP(const int level, const char* one, const char* two);
+  char* _getMS();
+
+  #define D_PFX() snprintf_P(_dbg1,DBG1_LEN,PSTR("%s %s:%d %s Heap:%lu"),_getMS(),extractFileName(__FILE__),__LINE__,__FUNCTION__,(unsigned long)ESP.getFreeHeap())
+
 #ifdef ESP8266
 #if DEBUG_LEVEL >= VERBOSE
-#define DEBUG_VERBOSE(text,...) DEBUG_ESP_PORT.print("V ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+//#define DEBUG_VERBOSE(text,...) DEBUG_ESP_PORT.print("V ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+  #define DEBUG_VERBOSE(text,...) D_PFX();snprintf_P(_dbg2,DBG2_LEN,PSTR(text),##__VA_ARGS__);_dbgP(VERBOSE,_dbg1,_dbg2)
 #else
 #define DEBUG_VERBOSE(...)
 #endif
 
 #if DEBUG_LEVEL >= DBG
-#define DEBUG_DBG(text,...) DEBUG_ESP_PORT.print("D ");DEBUG_LINE_PREFIX(); DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+//#define DEBUG_DBG(text,...) DEBUG_ESP_PORT.print("D ");DEBUG_LINE_PREFIX(); DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+  #define DEBUG_DBG(text,...) D_PFX();snprintf_P(_dbg2,DBG2_LEN,PSTR(text),##__VA_ARGS__);_dbgP(DBG,_dbg1,_dbg2)
 #else
 #define DEBUG_DBG(...)
 #endif
 
 #if DEBUG_LEVEL >= INFO
-#define DEBUG_INFO(text,...) DEBUG_ESP_PORT.print("I ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+//#define DEBUG_INFO(text,...) DEBUG_ESP_PORT.print("I ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+  #define DEBUG_INFO(text,...) D_PFX();snprintf_P(_dbg2,DBG2_LEN,PSTR(text),##__VA_ARGS__);_dbgP(INFO,_dbg1,_dbg2)
 #else
 #define DEBUG_INFO(...)
 #endif
 
 #if DEBUG_LEVEL >= WARN
-#define DEBUG_WARN(text,...) DEBUG_ESP_PORT.print("W ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+//#define DEBUG_WARN(text,...) DEBUG_ESP_PORT.print("W ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+  #define DEBUG_WARN(text,...) D_PFX();snprintf_P(_dbg2,DBG2_LEN,PSTR(text),##__VA_ARGS__);_dbgP(WARN,_dbg1,_dbg2)
 #else
 #define DEBUG_WARN(...)
 #endif
 
 #if DEBUG_LEVEL >= ERROR
-#define DEBUG_ERROR(text,...) DEBUG_ESP_PORT.print("E ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+//#define DEBUG_ERROR(text,...) DEBUG_ESP_PORT.print("E ");DEBUG_LINE_PREFIX();DEBUG_ESP_PORT.printf_P(PSTR(text),##__VA_ARGS__);DEBUG_ESP_PORT.println()
+  #define DEBUG_ERROR(text,...) D_PFX();snprintf_P(_dbg2,DBG2_LEN,PSTR(text),##__VA_ARGS__);_dbgP(ERROR,_dbg1,_dbg2)
 #else
 #define DEBUG_ERROR(...)
 #endif
